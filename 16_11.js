@@ -1,7 +1,7 @@
-var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
-var fetch = require('node-fetch');
+let XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
+let fetch = require('node-fetch');
 
-var arrayOfUrls = createArrayWithUrls(10);
+let arrayOfUrls = createArrayWithUrls(10);
 
 function createArrayWithUrls (numberOfposts) {
     var root = 'https://jsonplaceholder.typicode.com';
@@ -14,9 +14,7 @@ function createArrayWithUrls (numberOfposts) {
 
 //Promise.all(arrayOfUrls.map(fetch)).then(results => console.log(results));
 
-
-let final = [];
-  
+const final = [];
 function workMyCollection(arr) {
     return arr.reduce((promise, item) => promise
         .then((result) => {
@@ -27,29 +25,38 @@ function workMyCollection(arr) {
         .catch(console.error)
     , Promise.resolve());
   }
-
-  workMyCollection(arrayOfUrls)
+ 
+ /* workMyCollection(arrayOfUrls)
     .then(() => console.log(final));
-  
-
-
-
-
-
-
-
-
-
+ */
 
 /*
-function createArrayWithUrls1 (numberOfposts) {
-    var root = 'https://jsonplaceholder.typicode.com';
-    var array = [];
-    for(i = 1; i <= numberOfposts; i++) {
-        array.push(root + `/posts/${i}`); 
-    }
-}
-createArrayWithUrls1(10)
-    .then(array => console.log(array))
-    .catch(error => console.log(error));
+let chain = Promise.resolve();
+let results = []
+
+arrayOfUrls.forEach((url) => {
+    chain = chain
+    .then(() => fetch(url))
+    .then(res => res.json())
+    .then(res => results.push(res));
+})
+
+chain.then(() => {
+    console.log(results);
+  });
 */
+
+const url = 'https://jsonplaceholder.typicode.com/posts/';
+
+function getPosts(postNumber) {
+    return fetch(url + postNumber)
+        .then(res => res.json())
+        .then(res => {
+            console.log(res);
+            if (postNumber > 9) return;
+            return getPosts(postNumber + 1);
+        });
+}
+
+getPosts(1);
+
