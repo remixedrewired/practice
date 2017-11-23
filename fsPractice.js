@@ -19,14 +19,18 @@ function addBook() {
 function Start(){
     return new Promise((res, rej) => {
         if(size !== 1) {
-        writeStream.write(JSON.stringify(book) + ',');
+            fs.writeFile('file2.json', JSON.stringify(book) + ',',  {'flag':'a'},  function(err) {
+                if (err) rej(err)
+                else res();
+            });
         } else {
-        writeStream.write(JSON.stringify(book));
+            fs.writeFile('file2.json', JSON.stringify(book),  {'flag':'a'},  function(err) {
+                if (err) rej(err)
+                else res();
+            });
         }
         addBook();
         size--; 
-        res();
-
     }).then(() => {
         console.log(size);
         if(size) {
@@ -38,36 +42,20 @@ function Start(){
 
 function BracketLeft() {
     return new Promise((res, rej) => {
-        writeStream.write('[');
+        fs.writeFile('file2.json', '[',  {'flag':'a'},  function(err) {
+            if (err) {
+                return console.error(err);
+            }
+        });
         res();
     })
 }
 
 
 BracketLeft().then(Start).then(() => {
-    writeStream.write(']');
+    fs.writeFile('file2.json', ']',  {'flag':'a'},  function(err) {
+        if (err) {
+            return console.error(err);
+        }
+    });
 })
-
-/*
-function Write(number) {
-    return new Promise((res, rej) => {
-            let book = {
-                title:'title' + number,
-                id:number
-            };
-            let stringifiedBook = JSON.stringify(book);
-            res(stringifiedBook);            
-    })
-}
-
-function WriteWrap(number) {
-    return Write(number)
-        .then((res) => {
-                    fs.appendFile("file2.json", res, (err) => {
-                        if(err) throw new Error('Something gone incorrect :(');
-                        console.log('Writting done :)');
-                    });
-                    if(number > 10000) return;
-                    return WriteWrap(number + 1);                
-            })};    
-*/
