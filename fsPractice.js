@@ -1,66 +1,59 @@
 const fs = require('fs');
-let size = process.argv[2];
 
+let size = process.argv[2];
 let book = {
     id: 1,
     title: 1
 };
 
 function addBook() {
-    for(property in book) {
-        book[property] += 1;
-    }
+   book.id += 1;
+   book.title += 1;
 }
-
-function Start(){
+function start(){
     return new Promise((resolve, reject) => {
         if(size !== 1) {
-            fs.writeFile('file2.json', JSON.stringify(book) + ',',  {'flag':'a'},  function(err) {
-                if (err) reject(err)
+            fs.writeFile('books.json', JSON.stringify(book) + ',',  {'flag':'a'},  err => {
+                if (err) reject(err);
                 else {
-                    resolve();
                     addBook();
                     size--; 
+                    resolve();
                 }
             });
         } else {
-            fs.writeFile('file2.json', JSON.stringify(book),  {'flag':'a'},  function(err) {
-                if (err) reject(err)
+            fs.writeFile('books.json', JSON.stringify(book),  {'flag':'a'},  err => {
+                if (err) reject(err);
                 else {
-                    resolve();
                     addBook();
-                    size--; 
+                    size--;
+                    resolve();
                 }
             });
         }
     }).then(() => {
-        console.log(size);
         if(size) {
-            return Start();
-        } 
-        return
+            return start();
+        }
+        return console.log('Writting is done');
     })
 }
-
-function BracketLeft() {
+function writeBracketLeft() {
     return new Promise((resolve, reject) => {
-        fs.writeFile('file2.json', '[',  {'flag':'a'},  function(err) {
-            if (err) reject(err);
-            resolve();
+        fs.writeFile('books.json', '[',  {'flag':'a'},  err => {
+            err ? reject(err): resolve();
         });
     })
 }
-function BracketRigth(){
+function writeBracketRigth(){
     return new Promise((resolve, reject) => {
-        fs.writeFile('file2.json', ']',  {'flag':'a'},  function(err) {
-            if (err) reject(err);
-            resolve();
+        fs.writeFile('books.json', ']',  {'flag':'a'},  err => {
+            err ? reject(err): resolve();
         });  
     })
 }
 
-
-BracketLeft()
-    .then(Start)
-    .then(BracketRigth)
-    .catch((err) => console.log(err));
+writeBracketLeft()
+    .then(start)
+    .then(writeBracketRigth)
+    .catch(err => console.log(err));
