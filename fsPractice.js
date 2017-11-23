@@ -1,14 +1,10 @@
-
 const fs = require('fs');
-const writeStream = fs.createWriteStream('file2.json');
 let size = process.argv[2];
-
-console.log(size);
 
 let book = {
     id: 1,
     title: 1
-}
+};
 
 function addBook() {
     for(property in book) {
@@ -17,45 +13,54 @@ function addBook() {
 }
 
 function Start(){
-    return new Promise((res, rej) => {
+    return new Promise((resolve, reject) => {
         if(size !== 1) {
             fs.writeFile('file2.json', JSON.stringify(book) + ',',  {'flag':'a'},  function(err) {
-                if (err) rej(err)
-                else res();
+                if (err) reject(err)
+                else {
+                    resolve();
+                    addBook();
+                    size--; 
+                }
             });
         } else {
             fs.writeFile('file2.json', JSON.stringify(book),  {'flag':'a'},  function(err) {
-                if (err) rej(err)
-                else res();
+                if (err) reject(err)
+                else {
+                    resolve();
+                    addBook();
+                    size--; 
+                }
             });
         }
-        addBook();
-        size--; 
     }).then(() => {
         console.log(size);
         if(size) {
-            return Start()
+            return Start();
         } 
         return
     })
 }
 
 function BracketLeft() {
-    return new Promise((res, rej) => {
+    return new Promise((resolve, reject) => {
         fs.writeFile('file2.json', '[',  {'flag':'a'},  function(err) {
-            if (err) {
-                return console.error(err);
-            }
+            if (err) reject(err);
+            resolve();
         });
-        res();
+    })
+}
+function BracketRigth(){
+    return new Promise((resolve, reject) => {
+        fs.writeFile('file2.json', ']',  {'flag':'a'},  function(err) {
+            if (err) reject(err);
+            resolve();
+        });  
     })
 }
 
 
-BracketLeft().then(Start).then(() => {
-    fs.writeFile('file2.json', ']',  {'flag':'a'},  function(err) {
-        if (err) {
-            return console.error(err);
-        }
-    });
-})
+BracketLeft()
+    .then(Start)
+    .then(BracketRigth)
+    .catch((err) => console.log(err));
