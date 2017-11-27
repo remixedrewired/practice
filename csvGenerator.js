@@ -1,5 +1,5 @@
 const fs = require('fs');
-const writeStream = require('stream');
+const file = fs.createWriteStream('books.csv');
 
 let size = process.argv[2];
 let book = {
@@ -25,10 +25,10 @@ function generateHeader(obj) {
 }
 function addHeader(obj){
     return new Promise((resolve, reject) => {
-        fs.writeFile('books.csv', generateHeader(book),  {'flag':'a'},  err => {
-            if(err) reject();
+        file.write(generateHeader(book), err => {
+            if(err) reject(err);
         });
-       resolve();
+        resolve();
     })
 }
 function convertToCSV(obj) {
@@ -45,7 +45,7 @@ function convertToCSV(obj) {
 
 function start(){
     return new Promise((resolve, reject) => {
-            fs.writeFile('books.csv', convertToCSV(book),  {'flag':'a'},  err => {
+            file.write(convertToCSV(book), err => {
                 if (err) reject(err);
                 else {
                     addBook();
