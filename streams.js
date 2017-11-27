@@ -7,6 +7,7 @@ class CsvToStrings extends stream.Transform {
       decodeStrings: false
     });
     super(options);
+    this.headers;
   }
 
   _transform(chunk, encoding, callback) {
@@ -15,14 +16,19 @@ class CsvToStrings extends stream.Transform {
       return callback();
     }
     chunk = chunk.split("\n");
-    let headers = chunk.shift().split(",");
+    
+    
+    if(!this.headers){
+      this.headers = chunk.shift().split(",");
+    }
+    console.log(this.headers);
+
     let json = [];  
-      
-    chunk.forEach(function(d){
-        let tmp = {}
-        let row = d.split(",")
-        for(let i = 0; i < headers.length; i++){
-            tmp[headers[i]] = row[i];
+    chunk.forEach(d => {
+        let tmp = {};
+        let row = d.split(",");
+        for(let i = 0; i < this.headers.length; i++){
+            tmp[this.headers[i]] = row[i];
         }
         json.push(tmp);
     });
