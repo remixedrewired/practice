@@ -17,22 +17,22 @@ function createArrayWithUrls (numberOfposts) {
 
 const final = [];
 function workMyCollection(arr) {
-    return arr.reduce((promise, item) => promise
-            .then((result) => {
-                console.log(`item ${item}`);
-                return fetch(item)
-                        .then(result => result.json()).then(result => final.push(result.id));
-            })
-            .catch(console.error)
-        , Promise.resolve()
-    );
-  }
+    return arr.reduce((promise, item) => {
+        return promise
+                .then((result) => {
+                    console.log(`item ${item}`);
+                    return fetch(item)
+                            .then(result => result.json()).then(result => final.push(result.id));
+                })  
+                .catch(console.error)
+    }, Promise.resolve())
+} 
  
   workMyCollection(arrayOfUrls)
     .then(() => console.log(final));
  
 
-/*-
+/*
 let chain = Promise.resolve();
 let results = []
 

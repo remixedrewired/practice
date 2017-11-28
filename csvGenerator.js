@@ -16,7 +16,7 @@ function generateHeader(obj) {
     let book = typeof obj != 'object' ? JSON.parse(obj) : obj;
     let str = '';
     let line = '';
-    for (var index in book) {
+    for (let index in book) {
         if (line != '') line += ','
         line += index;
     }
@@ -35,7 +35,7 @@ function convertToCSV(obj) {
     let book = typeof obj != 'object' ? JSON.parse(obj) : obj;
     let str = '';
     let line = '';
-    for (var index in book) {
+    for (let index in book) {
         if (line != '') line += ','
         line += book[index];
     }
