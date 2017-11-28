@@ -3,6 +3,7 @@ let fetch = require('node-fetch');
 
 let arrayOfUrls = createArrayWithUrls(10);
 
+
 function createArrayWithUrls (numberOfposts) {
     var root = 'https://jsonplaceholder.typicode.com';
     var array = [];
@@ -17,20 +18,21 @@ function createArrayWithUrls (numberOfposts) {
 const final = [];
 function workMyCollection(arr) {
     return arr.reduce((promise, item) => promise
-        .then((result) => {
-            console.log(`item ${item}`);
-            return fetch(item)
-            .then((res)=> res.json()).then(result => final.push(result));
+            .then((result) => {
+                console.log(`item ${item}`);
+                return fetch(item)
+                        .then(result => result.json()).then(result => final.push(result.id));
             })
-        .catch(console.error)
-    , Promise.resolve());
+            .catch(console.error)
+        , Promise.resolve()
+    );
   }
  
- /* workMyCollection(arrayOfUrls)
+  workMyCollection(arrayOfUrls)
     .then(() => console.log(final));
- */
+ 
 
-/*
+/*-
 let chain = Promise.resolve();
 let results = []
 
@@ -45,7 +47,7 @@ chain.then(() => {
     console.log(results);
   });
 */
-
+/*
 const url = 'https://jsonplaceholder.typicode.com/posts/';
 
 function getPosts(postNumber) {
@@ -60,3 +62,4 @@ function getPosts(postNumber) {
 
 getPosts(1);
 
+*/

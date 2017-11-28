@@ -7,36 +7,56 @@ class CsvToStrings extends stream.Transform {
       decodeStrings: false
     });
     super(options);
-    this.headers;
   }
 
   _transform(chunk, encoding, callback) {
     if (encoding !== 'utf8') {
-      this.emit('error', new Error('Only UTF-8 sources are supported'));
+      this.emit('error', new Error('Only UTF-8 sources are supported (1st transform)'));
       return callback();
     }
     chunk = chunk.split("\n");
-    
-    
-    if(!this.headers){
-      this.headers = chunk.shift().split(",");
+    let counter = 0;
+    while(counter < chunk.length - 1) {
+      this.push(JSON.stringify(chunk[counter]));
+      counter++;
     }
-    console.log(this.headers);
-
-    let json = [];  
-    chunk.forEach(d => {
-        let tmp = {};
-        let row = d.split(",");
-        for(let i = 0; i < this.headers.length; i++){
-            tmp[this.headers[i]] = row[i];
-        }
-        json.push(tmp);
-    });
-    this.push(JSON.stringify(json));
     callback();
+  }
+}
+class StringToJSON extends stream.Transform {
+  constructor(options = {}) {
+   /* options = Object.assign({}, options, {
+      decodeStrings: false
+    });*/
+    super(options);
+    this.headers;
+  }
+
+  _transform(chunk, encoding, callback) {
+   /* if (encoding !== 'utf8') {
+      this.emit('error', new Error('Only UTF-8 sources are supported (2nd transform)'));
+      return callback();
+    }*/
+    chunk = JSON.parse(chunk);   
+    if(!this.headers){
+      this.headers = chunk.split(",");
+      this.push('[');
+    }
+    let tmp = {};
+    let row = chunk.split(",");
+    for(let i = 0; i < this.headers.length; i++){
+        tmp[this.headers[i]] = row[i];
+    }    
+    this.push(JSON.stringify(tmp));
+    callback();
+  }
+
+  _flush() {
+    this.push(']');
   }
 }
 
 fs.createReadStream('books.csv', 'utf8')
   .pipe(new CsvToStrings())
+  .pipe(new StringToJSON())
   .pipe(fs.createWriteStream('books.json'));
