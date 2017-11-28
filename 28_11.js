@@ -1,4 +1,6 @@
 let fetch = require('node-fetch');
+
+
 function createArrayWithUrls (numberOfposts) {
     var root = 'https://jsonplaceholder.typicode.com';
     var array = [];
@@ -8,31 +10,37 @@ function createArrayWithUrls (numberOfposts) {
     return array;
 }  
 
-let arrayOfUrls = createArrayWithUrls(10);
+let arrayOfUrls = createArrayWithUrls(13);
 const final = [];
 let arrayPer5 = [];
-let counter = 0;
 
-// вот тут хз, как вернуть функцию 
+
+
 function myFetch(item){
+    console.log(item)
     return fetch(item)
-         .then(result => result.json()).then(result => final.push(result.id));
+         .then(result => result.json()).then(result => {
+             final.push(result.id)
+            console.log('done ' + result.id);
+        });
         
 }
 function workMyCollection(arr) {
-    return arr.reduce((promise, item) => {
+    return arr.reduce((promise, item, index) => {
         return promise
                 .then(() => {
-                    if(arrayPer5.length !== 5) {
-                        arrayPer5.push(myFetch(item));
-                        console.log(arrayPer5);
-                        return Promise.resolve();
-                    } else {
+                    arrayPer5.push(myFetch(item));
+                    if (arrayPer5.length === 5 || index === arr.length - 1) {
                         return promise.then(() => Promise.all(arrayPer5)).then(() => {
                             arrayPer5 = [];
-                            counter = 0;
+                            return new Promise((res, rej) => {
+                                setTimeout(() => {
+                                    res()
+                                }, 500);
+                            })
                         })
                     }
+                    return promise;
                 })  
                 .catch(console.error)
     }, Promise.resolve())
