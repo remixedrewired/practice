@@ -14,19 +14,18 @@ function myFetch(url, postNumber){
 }
 
 function getPosts(postNumber) {
-    arrayPer5.push(myFetch(url, postNumber));
-    if(arrayPer5.length < 5) {
-        counter++;
-        return getPosts(postNumber + 1);
-    } else {
-        return Promise.all(arrayPer5).then(() => {
-            arrayPer5 = [];
-            if(counter > 10) return;
-            return setTimeout(() => {
-                getPosts(postNumber + 1)
-                }, 1000);
+    process.nextTick(() => {
+        if(postNumber > 10) return Promise.resolve().then(() => console.log(final));
+        arrayPer5.push(myFetch(url, postNumber));
+        if(arrayPer5.length === 5) {
+            return Promise.all(arrayPer5).then(() => {
+                arrayPer5 = [];
+                return new Promise((resolve, reject) => {
+                    setTimeout(() => resolve(), 500);
+                }).then(() => getPosts(postNumber + 1)); 
             })
-    }
+        }
+        return getPosts(postNumber + 1);
+    })
 }
-
-getPosts(1).then(() => console.log(final));
+getPosts(1)
