@@ -4,7 +4,7 @@ let fetch = require('node-fetch');
 function createArrayWithUrls (numberOfposts) {
     var root = 'https://jsonplaceholder.typicode.com';
     var array = [];
-    for(i = 1; i <=numberOfposts; i++) {
+    for(i = 1; i <= numberOfposts; i++) {
         array.push(root + `/posts/${i}`); 
     }
     return array;
@@ -40,12 +40,12 @@ function workMyCollection(arr) {
                             })
                         })
                     }
-                    return promise;
+                    
                 })  
                 .catch(console.error)
     }, Promise.resolve())
 } 
  
-  workMyCollection(arrayOfUrls)
+workMyCollection(arrayOfUrls)
     .then(() => console.log(final));
  
