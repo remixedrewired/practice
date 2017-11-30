@@ -1,4 +1,5 @@
-let fetch = require('node-fetch');
+const fetch = require('node-fetch');
+
 const url = 'https://jsonplaceholder.typicode.com/posts/';
 let arrayPer5 = [];
 let counter = 0;
@@ -14,7 +15,7 @@ function myFetch(url, postNumber){
 }
 
 function getPosts(postNumber) {
-    process.nextTick(() => {
+   process.nextTick(() => {
         if(postNumber > 10) return console.log(final);
         arrayPer5.push(myFetch(url, postNumber));
         if(arrayPer5.length === 5) {
