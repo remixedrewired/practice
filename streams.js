@@ -25,18 +25,12 @@ class CsvToStrings extends stream.Transform {
 }
 class StringToJSON extends stream.Transform {
   constructor(options = {}) {
-   /* options = Object.assign({}, options, {
-      decodeStrings: false
-    });*/
     super(options);
     this.headers;
+    this.firstItem;
   }
 
   _transform(chunk, encoding, callback) {
-   /* if (encoding !== 'utf8') {
-      this.emit('error', new Error('Only UTF-8 sources are supported (2nd transform)'));
-      return callback();
-    }*/
     chunk = JSON.parse(chunk);   
     if(!this.headers){
       this.headers = chunk.split(",");
@@ -46,8 +40,13 @@ class StringToJSON extends stream.Transform {
     let row = chunk.split(",");
     for(let i = 0; i < this.headers.length; i++){
         tmp[this.headers[i]] = row[i];
-    }    
-    this.push(JSON.stringify(tmp));
+    } 
+    if(!this.firstItem) {
+      this.push(JSON.stringify(tmp));
+      this.firstItem = true;
+    } else {
+      this.push(',' + JSON.stringify(tmp))
+    }  
     callback();
   }
 
