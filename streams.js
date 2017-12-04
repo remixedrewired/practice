@@ -35,19 +35,21 @@ class StringToJSON extends stream.Transform {
     if(!this.headers){
       this.headers = chunk.split(",");
       this.push('[');
-    }
-    let tmp = {};
-    let row = chunk.split(",");
-    for(let i = 0; i < this.headers.length; i++){
-        tmp[this.headers[i]] = row[i];
-    } 
-    if(!this.firstItem) {
-      this.push(JSON.stringify(tmp));
-      this.firstItem = true;
     } else {
-      this.push(',' + JSON.stringify(tmp))
-    }  
+      let tmp = {};
+      let row = chunk.split(",");
+      for(let i = 0; i < this.headers.length; i++){
+          tmp[this.headers[i]] = row[i];
+      } 
+      if(!this.firstItem) {
+        this.push(JSON.stringify(tmp));
+        this.firstItem = true;
+      } else {
+        this.push(',' + JSON.stringify(tmp))
+      }  
+    }
     callback();
+    
   }
 
   _flush() {
