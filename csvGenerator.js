@@ -1,26 +1,16 @@
 const fs = require('fs');
 const file = fs.createWriteStream('books.csv');
 
-
-let isHeader = true;
-let book = {
-    id: 1,
-    get title () {
-        return 'title' + this.id;
-    }
-};
-
-function addBook() {
-   book.id += 1;
-}
-function convertToCSV(obj) {
-    let book = typeof obj != 'object' ? JSON.parse(obj) : obj;
+function convertToCSV(number) {
+    let book = {
+        id: number,
+        title: `title${number}`
+    };
     let line = '';
-    if(isHeader) {
+    if(number === 0) {
         for (let index in book) {
             if (line != '') line += ','
             line += index;
-            isHeader = false;
         }
     } else {
         for (let index in book) {
@@ -31,31 +21,26 @@ function convertToCSV(obj) {
     line = line + '\n';
     return line;
 }
-function addHeader(){
+function start(size, number){
     return new Promise((resolve, reject) => {
-        file.write(convertToCSV(book), err => {
-            err ? reject(err) : resolve();;
-        });   
-    })
-}
-
-function start(size){
-    return new Promise((resolve, reject) => {
-            file.write(convertToCSV(book), err => {
-                if (err) reject(err);
-                else {
-                    addBook();
+        if(isNaN(parseInt(size))) return reject('Введенное значение не число, а должно бы им быть :c');
+        file.write(convertToCSV(number), err => {
+            if (err) reject(err);
+            if(number === 0) 
+                {
+                    resolve();
+                } else {
                     size--; 
                     resolve();
                 }
-            });
+        });
     }).then(() => {
         if(size) {
-            return start(size);
+            return start(size, number + 1);
         }
         return console.log('Writting is done');
     })
 }
-addHeader()
-    .then(start(process.argv[2]))
+start(process.argv[2], 0)
     .catch(err => console.log(err));
+
